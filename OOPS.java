@@ -1,25 +1,24 @@
-import java.util.*;
+interface Animal{
+    int eyes = 2;
+    public void walk();
+    // void eat();
+}
 
-class Shape{
-    public void area(){
-        System.out.println("displays area");
+interface Herbivore{
+
+}
+
+class Horse implements Animal, Herbivore{
+    public void walk(){
+        System.out.println("walks on 4 legs");
     }
 }
 
-class Triangle extends Shape{
-    public void area(int length, int height){
-        System.out.println(1/2*length*height);
-    }
-}
-
-class Circle extends Shape{
-    public void area(int r){
-        System.out.println(3.14*(r*r));
-    }
-}
 
 public class OOPS{
     public static void main(String[] args){
+        Horse horse = new Horse();
+        horse.walk();
 
     }
 }
