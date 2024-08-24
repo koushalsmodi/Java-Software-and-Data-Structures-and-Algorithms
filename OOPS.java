@@ -1,45 +1,25 @@
-class Pen{
-    String colour; // red, green, blue, yellow
-    String type; // ballpoint, gel
+import java.util.*;
 
-    public void write(){
-        System.out.println("writing something");
-    }
-
-    public void printColor(){
-        System.out.println(this.colour);
+class Shape{
+    public void area(){
+        System.out.println("displays area");
     }
 }
 
-class Student{
-
-    String name;
-    int age;
-
-    public void printInfo(String name){
-        System.out.println(this.name);
-        
-    }
-
-    public void printInfo(int age){
-        System.out.println(this.age);
-
-    }
-
-    public void printInfo(String name, int age){
-        System.out.println(name + " " + age);
+class Triangle extends Shape{
+    public void area(int length, int height){
+        System.out.println(1/2*length*height);
     }
 }
 
-public class OOPS {
+class Circle extends Shape{
+    public void area(int r){
+        System.out.println(3.14*(r*r));
+    }
+}
+
+public class OOPS{
     public static void main(String[] args){
-        Student s1 = new Student();
-        s1.name = "Ganpati";
-        s1.age = 24;
-
-        s1.printInfo(s1.name, s1.age);
-
-        
 
     }
 }
