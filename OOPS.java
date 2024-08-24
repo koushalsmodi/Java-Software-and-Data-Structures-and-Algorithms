@@ -1,24 +1,27 @@
-interface Animal{
-    int eyes = 2;
-    public void walk();
-    // void eat();
-}
+class Student{
+    String name;
+    int age;
 
-interface Herbivore{
+    public void printInfo(){
+        this.name = name;
+        this.age = age;
+        System.out.println(name + " " + age);
 
-}
-
-class Horse implements Animal, Herbivore{
-    public void walk(){
-        System.out.println("walks on 4 legs");
     }
-}
 
+}
 
 public class OOPS{
     public static void main(String[] args){
-        Horse horse = new Horse();
-        horse.walk();
+        Student student1 = new Student();
+        student1.name = "Avi";
+        student1.age = 24;
+        student1.printInfo();
+
+        Student student2 = new Student();
+        student2.name = "kumar";
+        student2.age = 19;
+        student2.printInfo();
 
     }
 }
