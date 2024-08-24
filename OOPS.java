@@ -1,29 +1,28 @@
-class Student{
-    String name;
-    int age;
-
-
-    public void printInfo(String name){
-        System.out.println("Name: " + name);
+abstract class Animal{
+    abstract void walk();
+    void breathe(){
+        System.out.println("this animal breathes air");
     }
-
-    public void printInfo(int age){
-        System.out.println("Age: " + age);
-    }
-
-    public void printInfo(String name, int age){
-        System.out.println("Name: " + name + " Age: " + age);
+    Animal(){
+        System.out.println("creating an animal");
     }
 
 }
 
+class Horse extends Animal{
+    Horse(){
+        System.out.println("created a horse");
+    }
+    void walk(){
+        System.out.println("has four 4 legs");
+    }
+}
+
 public class OOPS{
     public static void main(String[] args){
-        Student s1 = new Student();
-        s1.printInfo("Jason");
-        s1.printInfo("Ganpati", 24);
-        s1.printInfo(19);
-
+        Horse horse = new Horse();
+        horse.walk();
+        horse.breathe();
 
     }
 }
