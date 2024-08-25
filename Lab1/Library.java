@@ -3,7 +3,7 @@ package Lab1; // Library.java is part of the Lab1 folder I've created
 /*
  * Library.java has 2 classes:
  * UserLibrary class which handles adding books to the user's inventory, lists books in the user's inventory, facilitates the user to 
- * purchase books, and allows reading 20 lines 
+ * purchase books, allows reading 20 lines, and partial matching
  * and
  * Library class populates with all of the books, returns all books in the library, lists all books, and searches for books
  */
@@ -13,6 +13,10 @@ import java.io.BufferedReader; // for better performance for larger files and fo
 import java.io.FileReader; // file reading purposes
 import java.io.IOException; // throw exceptions
 import java.util.Scanner; // scanner is better for parsing, here we need it for "Enter" 
+
+class CountWords{
+    
+}
 
 class UserLibrary {
     private ArrayList<Book> UserLibraryBooks; // creating an array list of object type of Book in order to match with
@@ -31,7 +35,7 @@ class UserLibrary {
 
     public void readUserBookForward(String title) {
         // try and catch statements
-        // read the book
+        // read the book forwards
         try (BufferedReader reader = new BufferedReader(new FileReader(title))) {
             String line; // line stored
 
@@ -60,30 +64,61 @@ class UserLibrary {
     }
     public void readUserBookBackward(String title) {
         // try and catch statements
-        // read the book
+        // read the book backwards
         try (BufferedReader reader = new BufferedReader(new FileReader(title))) {
             ArrayList<String> backwardReading= new ArrayList<>();
-            String line;
+            // store the book in backwardReading
+            // add lines as long as end of book not reached
+            String line; 
             while ((line = reader.readLine()) != null){
                 backwardReading.add(line);
 
             }
-            int start = backwardReading.size() - 1;
-            Scanner sc = new Scanner(System.in);
+            int start = backwardReading.size() - 1; // start from the last index
+            Scanner sc = new Scanner(System.in); // for enter
+            // start from the end of the book and move 20 lines up
             for (int i = start; i >=0; i-=20){
                 int stop = Math.max(i-19, 0);
+                // start from the end of the book and move 20 lines up, one line at a time
                 for (int j = i; j >= stop; j--){
                     System.out.println(backwardReading.get(j));
                 }
+                // after 20 lines, ask for enter
                 System.out.println("Press Enter to continue: ");
                 sc.nextLine();
             }
-        
+        sc.close();
         }
-        
+        // if the book cannot be read
         catch (IOException e){
                 System.err.println("Error reading file: " + e);
         }
+    }
+
+    // convert the partial match title to lowercase
+    public void partialMatch(String title){
+        title = title.toLowerCase();
+        // store all books into a book object array list 
+        ArrayList<Book> allBooks = library.getAllBooks();
+        // boolean flag
+        boolean found = false;
+
+        // for every book in the library
+        for (Book book : allBooks){
+            // get the book title, making it lowercase so that i can match it with the user entered title
+            String bookTitle = book.getTitle().toLowerCase();
+            if (bookTitle.contains(title)){ // if the user entered partial title is present in the book title, we found a match
+                System.out.println("Match found for: " + title); // user entered partial title
+                System.out.println("Match is: " + bookTitle); // official title that was converted to lower case
+                purchaseBook(book.getTitle()); // allow the user to purchsae the book
+                found = true;
+                break;
+            }
+        }
+        if (!found){ // if the title wasn't found in the library
+            System.err.println(title + " not found");
+        }
+        
     }
 
     // which book and what word needs to be checked for
@@ -97,13 +132,14 @@ class UserLibrary {
                 }
                 
             }
+            // else raise error reading file
         } catch (IOException e){
             System.err.println("Error reading file: " + e);
         }
     
     }
     // adding 1 book at a time to user's library
-    public void addToUserLibrary(Book book) {
+    public void addToUserLibrary(Book book) { // store the book into the array list that follows the book object
         UserLibraryBooks.add(book);
     }
 
@@ -117,22 +153,20 @@ class UserLibrary {
 
     // user purchasing a book with book title
     public void purchaseBook(String title) {
-        boolean found = false; // boolean whether or not a book is found
-
+        title = title.toLowerCase();
         for (Book book : library.getAllBooks()) {
+            String bookTitle = book.getTitle().toLowerCase();
             // if the title entered by user matches that of the book's title the user will
             // be able to purchase the book
-            if (title.equals(book.getTitle())) {
-                // if found the book, turn boolean flag on add the book to the user library,
+            if (bookTitle.equals(title)) {
+                // if found the book, add the book to the user library,
                 addToUserLibrary(book);
-                found = true;
+                System.out.println("Book purchased: " + book.getTitle());
                 return;
             }
         }
         // if did not find the book, return error saying title not found
-        if (!found) {
-            System.err.println("Title: " + title + " not found");
-        }
+        System.err.println("Title: " + title + " not found");
     }
 }
 
@@ -209,7 +243,8 @@ public class Library {
         // l2.readUserBook("/Users/koushalsmodi/Desktop/cs245/Lab1/Krishna.txt");
         // l2.listUserLibrary(); // list books the user has in his own library
         // l2.onlySearchLines("/Users/koushalsmodi/Desktop/cs245/Lab1/Krishna.txt", "cow");
-        l2.readUserBookBackward("/Users/koushalsmodi/Desktop/cs245/Lab1/Krishna.txt"); // 21957
+        // l2.readUserBookBackward("/Users/koushalsmodi/Desktop/cs245/Lab1/Ramayana, Volume 2.txt"); // 21957
+        l2.partialMatch("Yogi");
 
 
     }
