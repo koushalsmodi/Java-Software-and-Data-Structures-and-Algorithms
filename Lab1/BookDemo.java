@@ -11,7 +11,6 @@ package Lab1;
 // run: java -cp . Lab1.BookDemo
 class Book {
     // attributes / properties of the book
-
     private String title;
     private String author;
     private String publisher;
@@ -79,14 +78,14 @@ class Book {
 
     // toString() method that returns the title, author name, publisher, and EbookNo
     public String toString() {
-        return "Title: " + title + "\n" + "Author: " + author + "\n" + "Publisher: " + publisher + "\n" + "EbookNo: "
-                + EbookNo;
+        return "Title: " + title + "\n" + "Author: " + author + "\n" + "Publisher: " + publisher + "\n" + "EbookNo: " + EbookNo;
     }
 
 }
 
 public class BookDemo {
     public static void main(String[] args) {
+        // created an instance and checked for a book
         Book book1 = new Book("The Mahabharata of Krishna-Dwaipayana Vyasa Vana Parva, Part 1", "Vyasa", "John B. Hare",
                 "11894");
         System.out.println(book1.getTitle());

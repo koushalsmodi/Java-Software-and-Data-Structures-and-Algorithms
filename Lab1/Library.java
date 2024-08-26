@@ -13,9 +13,140 @@ import java.io.BufferedReader; // for better performance for larger files and fo
 import java.io.FileReader; // file reading purposes
 import java.io.IOException; // throw exceptions
 import java.util.Scanner; // scanner is better for parsing, here we need it for "Enter" 
+import java.util.Comparator; // for comparing (for frequency ordering as well as reversing)
+import java.util.Collections; // for sorting (for frequency)
 
-class CountWords{
-    
+// The list can then be sorted based on the frequencies of the words.
+class WordFrequency {
+    // create a list of objects that contains words and frequencies
+    private String word;
+    private int frequency;
+
+    public WordFrequency(String word, int frequency) {
+        this.word = word;
+        this.frequency = frequency;
+
+    }
+
+    /*
+     * getters and setters for Word
+     */
+    public String getWord() {
+        return this.word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
+
+    /*
+     * getters and setters for Frequency
+     */
+    public int getFrequency() {
+        return this.frequency;
+    }
+
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+    }
+
+}
+
+class CountWords {
+    // storing stop words in the array list, creation
+    private ArrayList<String> stopWords;
+    // array list of object word frequency
+    private ArrayList<WordFrequency> wordFrequencies;
+
+    public CountWords() {
+        // initialization
+        stopWords = new ArrayList<>();
+        wordFrequencies = new ArrayList<>();
+        readStopWords();
+
+    }
+
+    // getter for getWordFrequencies
+    public ArrayList<WordFrequency> getWordFrequencies() {
+        return wordFrequencies;
+    }
+
+    // reading the stop words present in the Lab1 folder
+    public void readStopWords() {
+        // where the stop words are stored
+        String document = "/Users/koushalsmodi/Desktop/cs245/Lab1/NLTK's list of english stopwords";
+        try (BufferedReader reader = new BufferedReader(new FileReader(document))) {
+            String word; // every line is has only word so read that word and remove any blank space
+            // as long as we did not reach end of the file of stop words
+            while ((word = reader.readLine()) != null) {
+                stopWords.add(word.trim()); // add stop words
+            }
+        } catch (IOException e) {
+            System.out.println("error reading stopwords document: " + e); // raise exception if stopwords document not
+                                                                          // found
+        }
+
+    }
+
+    // reading the the book all at once
+    public void readUserBookAllAtOnce(String title) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(title))) {
+            String line;
+            ArrayList<String> BookAllAtOnce = new ArrayList<>(); // storing all lines in the BookAllAtOnce array list
+            // as long as book has not ended
+            while ((line = reader.readLine()) != null) {
+                String[] words = line.split("\\s++"); // find one or more white space and then break into words
+                BookAllAtOnce.add(line); // add line to the array list
+                for (String word : words) {
+                    word = word.toLowerCase(); // converting words to lowercase which will help to compare against those
+                                               // stop words which are all lowercase
+                    if (!stopWords.contains(word) && !word.isEmpty()) {
+                        addFrequency(word); // add the frequency for the word only if it isn't contained in the
+                                            // stopWords and is not empty, that is, has at least 1 character
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error reading book " + e); // else raise exception for reading the book
+        }
+    }
+
+    // for the word (which is not a stop word)
+    public void addFrequency(String word) {
+        for (WordFrequency wordfreq : wordFrequencies) {
+            // if the wordFrequencies's objects word matches the word read, increase the
+            // frequency by 1
+            if (wordfreq.getWord().equals(word)) {
+                wordfreq.setFrequency(wordfreq.getFrequency() + 1);
+                return;
+            }
+        }
+        // if a new word, add a new word
+        wordFrequencies.add(new WordFrequency(word, 1));
+    }
+
+    public void listTop10(ArrayList<WordFrequency> wordFrequencies) {
+        // got idea from Professor Alark Joshi: "It is similar to sorting a list with
+        // integers,
+        // except your comparison has to be a comparison of frequencies rather than just
+        // comparing the contents of an integer list."
+        // learnt using Comparators from here:
+        // https://stackoverflow.com/questions/2839137/how-to-use-comparator-in-java-to-sort
+        // idea is from the above link, code is mine
+        Comparator<WordFrequency> comparator = Comparator.comparingInt(WordFrequency::getFrequency).reversed();
+        Collections.sort(wordFrequencies, comparator);
+        // storing top 10 words
+        ArrayList<WordFrequency> top10 = new ArrayList<>();
+        // size of sublist
+        int size = 10;
+        top10.addAll(wordFrequencies.subList(0, size));
+        for (WordFrequency wordFreq : top10) {
+            System.out.println("Word: " + wordFreq.getWord() + ", Frequency: " + wordFreq.getFrequency());
+        }
+
+    }
+
 }
 
 class UserLibrary {
@@ -62,52 +193,55 @@ class UserLibrary {
             System.err.println("Error reading file: " + e); // graceful error handling
         }
     }
+
     public void readUserBookBackward(String title) {
         // try and catch statements
         // read the book backwards
         try (BufferedReader reader = new BufferedReader(new FileReader(title))) {
-            ArrayList<String> backwardReading= new ArrayList<>();
+            ArrayList<String> backwardReading = new ArrayList<>();
             // store the book in backwardReading
             // add lines as long as end of book not reached
-            String line; 
-            while ((line = reader.readLine()) != null){
+            String line;
+            while ((line = reader.readLine()) != null) {
                 backwardReading.add(line);
 
             }
             int start = backwardReading.size() - 1; // start from the last index
             Scanner sc = new Scanner(System.in); // for enter
             // start from the end of the book and move 20 lines up
-            for (int i = start; i >=0; i-=20){
-                int stop = Math.max(i-19, 0);
+            for (int i = start; i >= 0; i -= 20) {
+                int stop = Math.max(i - 19, 0);
                 // start from the end of the book and move 20 lines up, one line at a time
-                for (int j = i; j >= stop; j--){
+                for (int j = i; j >= stop; j--) {
                     System.out.println(backwardReading.get(j));
                 }
                 // after 20 lines, ask for enter
                 System.out.println("Press Enter to continue: ");
                 sc.nextLine();
             }
-        sc.close();
+            sc.close();
         }
         // if the book cannot be read
-        catch (IOException e){
-                System.err.println("Error reading file: " + e);
+        catch (IOException e) {
+            System.err.println("Error reading file: " + e);
         }
     }
 
     // convert the partial match title to lowercase
-    public void partialMatch(String title){
+    public void partialMatch(String title) {
         title = title.toLowerCase();
-        // store all books into a book object array list 
+        // store all books into a book object array list
         ArrayList<Book> allBooks = library.getAllBooks();
         // boolean flag
         boolean found = false;
 
         // for every book in the library
-        for (Book book : allBooks){
-            // get the book title, making it lowercase so that i can match it with the user entered title
+        for (Book book : allBooks) {
+            // get the book title, making it lowercase so that i can match it with the user
+            // entered title
             String bookTitle = book.getTitle().toLowerCase();
-            if (bookTitle.contains(title)){ // if the user entered partial title is present in the book title, we found a match
+            if (bookTitle.contains(title)) { // if the user entered partial title is present in the book title, we found
+                                             // a match
                 System.out.println("Match found for: " + title); // user entered partial title
                 System.out.println("Match is: " + bookTitle); // official title that was converted to lower case
                 purchaseBook(book.getTitle()); // allow the user to purchsae the book
@@ -115,29 +249,30 @@ class UserLibrary {
                 break;
             }
         }
-        if (!found){ // if the title wasn't found in the library
+        if (!found) { // if the title wasn't found in the library
             System.err.println(title + " not found");
         }
-        
+
     }
 
     // which book and what word needs to be checked for
-    public void onlySearchLines(String title, String match){
-        try (BufferedReader reader = new BufferedReader(new FileReader(title))){
+    public void onlySearchLines(String title, String match) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(title))) {
             String line;
-            while ((line = reader.readLine()) != null){
+            while ((line = reader.readLine()) != null) {
                 // // print if word match found
-                if (line.contains(match)){
-                    System.out.println(line); 
+                if (line.contains(match)) {
+                    System.out.println(line);
                 }
-                
+
             }
             // else raise error reading file
-        } catch (IOException e){
+        } catch (IOException e) {
             System.err.println("Error reading file: " + e);
         }
-    
+
     }
+
     // adding 1 book at a time to user's library
     public void addToUserLibrary(Book book) { // store the book into the array list that follows the book object
         UserLibraryBooks.add(book);
@@ -228,24 +363,45 @@ public class Library {
     public static void main(String[] args) {
         Library l1 = new Library();
         // adding a book
-        // l1.addBook(new Book("Romeo and Juliet", "William Shakespeare", "PG Shakespeare Team", "1513"));
-        // l1.listAllBooks();
-        // l1.searchBooks("Autobiography of a Yogi"); // search for the book
-        // System.out.println("cleared library now user library");
+        l1.addBook(new Book("Romeo and Juliet", "William Shakespeare", "PG Shakespeare Team", "1513"));
+        
+        // listing all books
+        l1.listAllBooks();
+
+        // search the following book
+        l1.searchBooks("Autobiography of a Yogi"); 
+        System.out.println("cleared library now user library");
 
         UserLibrary l2 = new UserLibrary(l1); // populating the library books, helpful in the for loop for checking the
                                               // book
+
         // user wants to buy the following books
-        // l2.purchaseBook("Vikram and the Vampire");
-        // l2.listUserLibrary(); // list books the user has in his own library
-        // l2.purchaseBook("The Mahabharata of Krishna-Dwaipayana Vyasa Vana Parva, Part 1");
-        // String filename = "/Users/koushalsmodi/Desktop/cs245/Lab1/Krishna.txt";
-        // l2.readUserBook("/Users/koushalsmodi/Desktop/cs245/Lab1/Krishna.txt");
-        // l2.listUserLibrary(); // list books the user has in his own library
-        // l2.onlySearchLines("/Users/koushalsmodi/Desktop/cs245/Lab1/Krishna.txt", "cow");
-        // l2.readUserBookBackward("/Users/koushalsmodi/Desktop/cs245/Lab1/Ramayana, Volume 2.txt"); // 21957
+        l2.purchaseBook("Vikram and the Vampire");
+
+        // // list books the user has in his own library
+        l2.listUserLibrary(); 
+
+        // purchase the book
+        l2.purchaseBook("The Mahabharata of Krishna-Dwaipayana Vyasa Vana Parva, Part 1");
+        String filename = "/Users/koushalsmodi/Desktop/cs245/Lab1/The Mahabharata of Krishna-Dwaipayana Vyasa.txt";
+        // read the book forwards
+        l2.readUserBookForward(filename);
+        // list books the user has in his own library
+        l2.listUserLibrary(); 
+
+        // search lines that match "cow"
+        l2.onlySearchLines("/Users/koushalsmodi/Desktop/cs245/Lab1/The Mahabharata of Krishna-Dwaipayana Vyasa.txt", "cow");
+        
+        // read the book backwards 
+        l2.readUserBookBackward("/Users/koushalsmodi/Desktop/cs245/Lab1/Ramayana, Volume 2.txt"); // max index: 21957
+
+        // even if partial match, buy the book
         l2.partialMatch("Yogi");
 
+        // read the book and get the top 10 words and their respective frequencies
+        CountWords cw = new CountWords();
+        cw.readUserBookAllAtOnce("/Users/koushalsmodi/Desktop/cs245/Lab1/YogaSutras.txt");
+        cw.listTop10(cw.getWordFrequencies());
 
     }
 
