@@ -1,4 +1,4 @@
-public class factorial {
+public class summing {
     // Write a recursive method to perform binary search on a sorted array.
 
     public static int sumNatural(int n) {
